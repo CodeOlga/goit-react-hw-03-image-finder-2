@@ -23,21 +23,15 @@ class App extends Component {
     endOfCollection: false
   }
 
-  componentDidUpdate(_, prevState) {
-    const { inputSearch, page } = this.state;
-
+async componentDidUpdate(_, prevState) {
+  const { inputSearch, page } = this.state;
+  
     if (inputSearch !== prevState.inputSearch || page !== prevState.page) {
-      this.setState({ loading: true })
+      try {
+        this.setState({ loading: true })
       
-      getImages(inputSearch, page)
-          .then(res => {
-            if (res.ok) {
-              return res.json()
-            }
-            return Promise.reject(
-              new Error(`Not found ${inputSearch}`))
-          })
-        .then(data => {
+        const data = await getImages(inputSearch, page)
+        
           if (!data.totalHits) {
             //якщо користувач ввів неіснуючий запит
             return toast.error(`No results found for ${inputSearch}`);
@@ -50,17 +44,21 @@ class App extends Component {
             this.setState({ endOfCollection: true }); 
             return toast.error('No more pictures');
           }
+        
             //успішний запит
           this.setState(prevState => ({
             hits: [...prevState.hits, ...data.hits],
             endOfCollection: false
           }))
-        })
-        .catch(error => {
-          console.log(error)
-          return toast.error(`Failed, try later`)
-        })
-        .finally(() => this.setState({ loading: false }))
+      }
+      
+      catch (error) {
+        return toast.error(`Something goes wrong. Please, try again.`);
+      }
+
+      finally {
+        this.setState({ loading: false })
+      } 
     }
   }
   
@@ -123,7 +121,7 @@ class App extends Component {
           <img src={modalImageURL} alt='Modal' />
         </Modal>}
         
-        <ToastContainer autoClose={3000} />
+        <ToastContainer autoClose={3000} theme="dark" closeButton={false} />
       </div>
     )
   }
