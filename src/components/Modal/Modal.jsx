@@ -5,7 +5,8 @@ import css from './Modal.module.css';
 
 const modalRoot = document.querySelector('#modal-root');
 
-class Modal extends Component {;
+class Modal extends Component {
+  
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyDown);
   }
@@ -14,14 +15,14 @@ class Modal extends Component {;
     window.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  handleKeyDown = (event) => {
-    if (event.code === 'Escape') {
+  handleKeyDown = (e) => {
+    if (e.code === 'Escape') {
       this.props.onClose();
     }
   }
 
-  handleBackdropClick = (event) => {
-    if (event.currentTarget === event.target) {
+  handleBackdropClick = (e) => {
+    if (e.currentTarget === e.target) {
       this.props.onClose();
     }
   }
@@ -36,7 +37,7 @@ class Modal extends Component {;
     )
     )
   }
-  
+
   //якщо без портала
   //   render() {
   //   return (
