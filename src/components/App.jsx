@@ -25,12 +25,17 @@ class App extends Component {
 
 async componentDidUpdate(_, prevState) {
   const { inputSearch, page } = this.state;
-  
+
     if (inputSearch !== prevState.inputSearch || page !== prevState.page) {
       try {
         this.setState({ loading: true })
       
         const data = await getImages(inputSearch, page)
+
+             //успішний запит
+          this.setState(prevState => ({
+            hits: [...prevState.hits, ...data.hits]
+          }))
         
           if (!data.totalHits) {
             //якщо користувач ввів неіснуючий запит
@@ -44,14 +49,8 @@ async componentDidUpdate(_, prevState) {
             this.setState({ endOfCollection: true }); 
             return toast.error('No more pictures');
           }
-        
-            //успішний запит
-          this.setState(prevState => ({
-            hits: [...prevState.hits, ...data.hits],
-            endOfCollection: false
-          }))
       }
-      
+      //помилка від сервера
       catch (error) {
         return toast.error(`Something goes wrong. Please, try again.`);
       }
@@ -62,11 +61,12 @@ async componentDidUpdate(_, prevState) {
     }
   }
   
+  //очищуємо hits, щоб при новому пошуку оновлювався запит
   handleFormSubmit = inputSearch => {
-    //очищуємо hits, щоб при новому пошуку оновлювався запит
-    this.setState({ inputSearch, page: 1, hits: [] });
+    this.setState({ inputSearch, page: 1, hits: [], endOfCollection: false});
   }
 
+  //пагінація
   handleLoadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }))
   }
@@ -78,11 +78,6 @@ async componentDidUpdate(_, prevState) {
   closeModal = () => {
     this.setState({ showModal: false, modalImageURL: ''})
   }
-
-  handleImageClick = (imageURL) => {
-    this.setState({ showModal: true, modalImageURL: imageURL });
-  }
-
 
   render() {
     const { hits, loading, showModal, modalImageURL, endOfCollection } = this.state;
@@ -108,7 +103,7 @@ async componentDidUpdate(_, prevState) {
 
         {hits && 
           <ImageGallery>
-            <ImageGalleryItem images={hits} onImageClick={this.handleImageClick} />
+            <ImageGalleryItem images={hits} onImageClick={this.openModal} />
           </ImageGallery>
           }
 
