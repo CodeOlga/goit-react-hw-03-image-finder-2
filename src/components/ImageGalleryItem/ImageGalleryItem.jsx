@@ -4,14 +4,14 @@ import css from './ImageGalleryItem.module.css';
 const ImageGalleryItem = ({ images, onImageClick }) => {
   return (
     <>
-      {images.map(({ id, webformatURL,tags}) => {
+      {images.map(({ id, webformatURL, largeImageURL, tags}) => {
         return (
           <li key={id} className={css.imageGalleryItem}>
             <img
               className={css.imageGalleryItemImage}
               src={webformatURL}
               alt={tags}
-              onClick={() => onImageClick(webformatURL)}/>
+              onClick={() => onImageClick(largeImageURL, tags)}/>
           </li>
         )
     })}
@@ -24,6 +24,7 @@ ImageGalleryItem.propTypes = {
     PropTypes.shape({
       id: PropTypes.number,
       webformatURL: PropTypes.string,
+      largeImageURL: PropTypes.string,
       tags: PropTypes.string,
     })
   ),

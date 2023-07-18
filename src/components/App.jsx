@@ -20,12 +20,12 @@ class App extends Component {
     modalImageURL: '',
     loading: false,
     showModal: false,
-    endOfCollection: false
+    endOfCollection: false,
+    tags: '',
   }
 
 async componentDidUpdate(_, prevState) {
   const { inputSearch, page } = this.state;
-
     if (inputSearch !== prevState.inputSearch || page !== prevState.page) {
       try {
         this.setState({ loading: true })
@@ -71,8 +71,8 @@ async componentDidUpdate(_, prevState) {
     this.setState(prevState => ({ page: prevState.page + 1 }))
   }
 
-  openModal = imageURL => {
-    this.setState({ showModal: true, modalImageURL: imageURL })
+  openModal = (largeImageURL, tags) => {
+    this.setState({ showModal: true, modalImageURL: largeImageURL, tags })
   }
 
   closeModal = () => {
@@ -80,7 +80,7 @@ async componentDidUpdate(_, prevState) {
   }
 
   render() {
-    const { hits, loading, showModal, modalImageURL, endOfCollection } = this.state;
+    const { hits, loading, showModal, modalImageURL, endOfCollection, tags } = this.state;
     const showLoadMoreBtn = hits.length > 0 && !endOfCollection; 
 
     return (
@@ -113,9 +113,9 @@ async componentDidUpdate(_, prevState) {
 
         {showModal &&
           <Modal onClose={this.closeModal}>
-          <img src={modalImageURL} alt='Modal' />
+          <img src={modalImageURL} alt={tags} />
         </Modal>}
-        
+ 
         <ToastContainer autoClose={3000} theme="dark" closeButton={false} />
       </div>
     )
